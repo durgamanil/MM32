@@ -1,0 +1,95 @@
+[Version]
+Signature = "$Windows NT$"
+Class = USB
+ClassGUID = {36FC9E60-C465-11CF-8056-444553540000}
+Provider = %ManufacturerName%
+;DriverPackageDisplayName = %DeviceName0%
+DriverVer = 01/26/2018,1.1
+;CatalogFile = MyCatFile.cat
+
+; ========== Manufacturer/Models sections ===========
+
+[Manufacturer]
+%ManufacturerName% = DeviceInstall,NTx86,NTamd64
+
+[DeviceInstall.NTx86]
+%DeviceName0% = USB_Install, USB\VID_2F81&PID_5721&MI_00
+
+[DeviceInstall.NTamd64]
+%DeviceName0% = USB_Install, USB\VID_2F81&PID_5721&MI_00
+
+; =================== Installation ===================
+
+[USB_Install]
+Include=winusb.inf
+Needs=WINUSB.NT
+
+[USB_Install.Services]
+Include=winusb.inf
+AddService=WinUSB,0x00000002,WinUSB_ServiceInstall
+
+[WinUSB_ServiceInstall]
+DisplayName     = %WinUSB_SvcDesc%
+ServiceType     = 1
+StartType       = 3
+ErrorControl    = 1
+ServiceBinary   = %12%\WinUSB.sys
+
+[USB_Install.Wdf]
+KmdfService=WINUSB, WinUsb_Install
+UmdfServiceOrder=WINUSB
+
+[WinUSB_Install]
+KmdfLibraryVersion=1.9
+
+[USB_Install.HW]
+AddReg=Dev_AddReg
+
+[Dev_AddReg]
+HKR,,DeviceInterfaceGUIDs,0x10000,%MM32Link_GUID%
+
+[USB_Install.CoInstallers]
+AddReg=CoInstallers_AddReg
+CopyFiles=CoInstallers_CopyFiles
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WinUSBCoInstaller2.dll","WUDFUpdate_01009.dll","WdfCoInstaller01009.dll,WdfCoInstaller"
+
+[CoInstallers_CopyFiles]
+WinUSBCoInstaller2.dll
+WdfCoInstaller01009.dll
+WUDFUpdate_01009.dll
+;winusb.sys
+
+[DestinationDirs]
+CoInstallers_CopyFiles=11
+
+; ================= Source Media Section =====================
+
+[SourceDisksNames]
+1 = %DISK_NAME%,,,\x86
+2 = %DISK_NAME%,,,\amd64
+
+[SourceDisksFiles.x86]
+WinUSBCoInstaller2.dll=1
+WdfCoInstaller01009.dll=1
+WUDFUpdate_01009.dll=1
+;winusb.sys=1
+
+[SourceDisksFiles.amd64]
+WinUSBCoInstaller2.dll=2
+WdfCoInstaller01009.dll=2
+WUDFUpdate_01009.dll=2
+;winusb.sys=2
+; =================== Strings ===================
+
+[Strings]
+ManufacturerName="MindMotion"
+DeviceName="MM32-LINK tools"
+DeviceName0="MM32-LINK"
+;WinUSB_SvcDesc="MM32-LINK"
+WinUSB_SvcDesc="WinUSB"
+DISK_NAME="Driver Disk"
+
+; =================== GUID ===================
+MM32Link_GUID="{dee824ef-729b-4a0e-9c14-b7117d33a817}"
